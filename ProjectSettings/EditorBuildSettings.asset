@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Scenes/AStar.unity
+  - enabled: 0
+    path: Assets/Scenes/AStar_taniguchi_original.unity
     guid: 40701bcf00a719a4cab2d6c01ce5135f
   m_configObjects: {}
