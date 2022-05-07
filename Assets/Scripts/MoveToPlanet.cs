@@ -24,6 +24,9 @@ public class MoveToPlanet : MonoBehaviour
     string projectNameStr = "";
     string totalStakedStr = "";
 
+    bool isHudShowing = false;
+
+
     void Start()
     {
         uiBackgroundImage.enabled = true;
@@ -47,24 +50,25 @@ public class MoveToPlanet : MonoBehaviour
         {
             gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
 
-            //星に一定の距離まで近づいたらHUDを表示させる
-            var direction = transform.forward;
-            Vector3 rayPosition = transform.position + new Vector3(0.0f, 1.0f, 0.0f);
-            Ray ray = new Ray(rayPosition, direction);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 100))
+            if (!isHudShowing)
             {
-                //                Debug.Log(hit.collider.gameObject.name);
-
-                if (hit.collider.gameObject.CompareTag("Planet"))
+                //星に一定の距離まで近づいたらHUDを表示させる
+                var direction = transform.forward;
+                Vector3 rayPosition = transform.position + new Vector3(0.0f, 1.0f, 0.0f);
+                Ray ray = new Ray(rayPosition, direction);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, 100))
                 {
-                    var tempDistance = Vector3.Distance(transform.position, hit.collider.gameObject.transform.position);
-                    Debug.Log(tempDistance);
-                    if (tempDistance < distanceCriteria)
+                    if (hit.collider.gameObject.CompareTag("Planet"))
                     {
-                        SetHUD(hit.collider.gameObject);
-                    }
+                        var tempDistance = Vector3.Distance(transform.position, hit.collider.gameObject.transform.position);
+                        Debug.Log(tempDistance);
+                        if (tempDistance < distanceCriteria)
+                        {
+                            SetHUD(hit.collider.gameObject);
+                        }
 
+                    }
                 }
             }
         }
@@ -76,7 +80,7 @@ public class MoveToPlanet : MonoBehaviour
             () => uiBackgroundImage.color,
             color => uiBackgroundImage.color = color,
             1f, // 目標値
-            2f // 所要時間
+            1.6f // 所要時間
         ).SetEase(Ease.InOutSine)
         .OnComplete(ShowText);
     }
@@ -129,6 +133,7 @@ public class MoveToPlanet : MonoBehaviour
     {
         if (targetObj.TryGetComponent(out PlanetBehaviour _behaviour))
         {
+            isHudShowing = true;
             projectNameStr = _behaviour.myProjectName;
             string[] tempAddress = { _behaviour.myProjectAddress };
             string resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
