@@ -37,17 +37,18 @@ public class MoveToPlanet : MonoBehaviour
         if (move)
         {
             gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
-            if (gameObject.transform.position.magnitude > distance)
-            {
+
+            //if (gameObject.transform.position.magnitude > distance)
+            //{
 
 
-                move = false;
-                backfireRight.SetActive(false);
-                backfireLeft.SetActive(false);
-                afterBurnerObj.SetActive(false);
-                projectNameObj.SetActive(false);
-                ShowUI();
-            }
+            //    move = false;
+            //    backfireRight.SetActive(false);
+            //    backfireLeft.SetActive(false);
+            //    afterBurnerObj.SetActive(false);
+            //    projectNameObj.SetActive(false);
+            //    ShowUI();
+            //}
         }
     }
 
@@ -67,6 +68,16 @@ public class MoveToPlanet : MonoBehaviour
         Debug.Log("showtext called");
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log(other.gameObject.name);
+        move = false;
+        backfireRight.SetActive(false);
+        backfireLeft.SetActive(false);
+        afterBurnerObj.SetActive(false);
+        projectNameObj.SetActive(false);
+        ShowUI();
+    }
 
 
 
