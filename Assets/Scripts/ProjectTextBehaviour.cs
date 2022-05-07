@@ -12,10 +12,10 @@ public class ProjectTextBehaviour : MonoBehaviour
 
     public void SetTextBody(string title, string totalStake, string yourStake, string yourReward)
     {
-        titleText.text = "Project: " + title;
-        totalStakeText.text = "Total Staked: " + totalStake + " ASTAR";
-        yourStakeText.text = "Your Stake: " + yourStake + " ASTAR";
-        YourRewardText.text = "Your Reward: " + yourReward + " ASTAR";
+        titleText.text = title;
+        totalStakeText.text = totalStake + " ASTAR";
+        yourStakeText.text = yourStake + " ASTAR";
+        YourRewardText.text = yourReward + " ASTAR";
     }
 
     // Start is called before the first frame update
