@@ -7,7 +7,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine.Networking;
 using System;
 using TMPro;
-public class APITest : MonoBehaviour
+public class APIManager : SingleInstance<APIManager>
 {
     //    string baseUrl = "https://us-central1-metaverstake.cloudfunctions.net/projects?address=0x854fb5E2E490f22c7e0b8eA0aD4cc8758EA34Bc9";
     string baseUrl = "https://us-central1-metaverstake.cloudfunctions.net/projects";
@@ -52,7 +52,7 @@ public class APITest : MonoBehaviour
     //    }
     //}
 
-    async UniTask<string> FetchEventDataByUniTask(string[] addresses)
+    public async UniTask<string> FetchEventDataByUniTask(string[] addresses)
     {
         string requestUrl = baseUrl;
 

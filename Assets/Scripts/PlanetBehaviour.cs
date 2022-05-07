@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlanetBehaviour : MonoBehaviour
 {
     public string myProjectName;
+    public string myProjectAddress;
     // Start is called before the first frame update
     void Start()
     {

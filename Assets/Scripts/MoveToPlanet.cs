@@ -39,6 +39,8 @@ public class MoveToPlanet : MonoBehaviour
             gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
             if (gameObject.transform.position.magnitude > distance)
             {
+
+
                 move = false;
                 backfireRight.SetActive(false);
                 backfireLeft.SetActive(false);
