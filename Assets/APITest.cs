@@ -9,7 +9,9 @@ using System;
 using TMPro;
 public class APITest : MonoBehaviour
 {
-    string baseUrl = "https://us-central1-metaverstake.cloudfunctions.net/projects?address=0x854fb5E2E490f22c7e0b8eA0aD4cc8758EA34Bc9";
+    //    string baseUrl = "https://us-central1-metaverstake.cloudfunctions.net/projects?address=0x854fb5E2E490f22c7e0b8eA0aD4cc8758EA34Bc9";
+    string baseUrl = "https://us-central1-metaverstake.cloudfunctions.net/projects?";
+    [SerializeField] string[] projAddress;
     [SerializeField] TextMeshProUGUI resultText;
 
     // Start is called before the first frame update
@@ -26,7 +28,7 @@ public class APITest : MonoBehaviour
 
     public async void OnTestButtonPressed()
     {
-        string result = await FetchEventDataByTask();
+        string result = await FetchEventDataByUniTask(projAddress);
         Debug.Log("結果：" + result);
         resultText.text = result;
     }
@@ -50,10 +52,15 @@ public class APITest : MonoBehaviour
         }
     }
 
-    async UniTask<string> FetchEventDataByUniTask(string queryWord)
+    async UniTask<string> FetchEventDataByUniTask(string[] addresses)
     {
-        var requestUrl = baseUrl + queryWord;
-        //        Debug.Log(requestUrl);
+        string requestUrl = baseUrl;
+
+        foreach (var eachAddress in addresses)
+        {
+            requestUrl = requestUrl + "address=" + eachAddress;
+        }
+        Debug.Log(requestUrl);
         UnityWebRequest req = UnityWebRequest.Get(requestUrl);
         await req.SendWebRequest();
         if (string.IsNullOrEmpty(req.error))
