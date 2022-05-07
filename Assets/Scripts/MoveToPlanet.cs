@@ -136,18 +136,25 @@ public class MoveToPlanet : MonoBehaviour
             isHudShowing = true;
             projectNameStr = _behaviour.myProjectName;
             string[] tempAddress = { _behaviour.myProjectAddress };
-            string resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
-            Debug.Log(resultStr);
-            JArray a = JArray.Parse(resultStr);
-            Debug.Log(a[0]);
-            totalStakedStr = a[0]["totalStaked"].ToString();
-            Debug.Log(totalStakedStr);
+            string resultStr = "";
+
+            try
+            {
+                resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
+                Debug.Log(resultStr);
+                JArray a = JArray.Parse(resultStr);
+                Debug.Log(a[0]);
+                totalStakedStr = a[0]["totalStaked"].ToString();
+                Debug.Log(totalStakedStr);
+            }
+            catch (System.Exception E)
+            {
+                Debug.LogError("API叩く際にエラー");
+                Debug.LogError(E.Message);
+                totalStakedStr = "!!! API error";
+            }
             projectNameObj.SetActive(false);
             ShowUI();
         }
     }
-
-
-
-
 }
