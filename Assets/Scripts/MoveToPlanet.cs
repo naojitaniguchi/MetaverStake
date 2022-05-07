@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-
 public class MoveToPlanet : MonoBehaviour
 {
     public float speed = 10.0f;
@@ -15,6 +14,11 @@ public class MoveToPlanet : MonoBehaviour
     bool move = false;
     // Start is called before the first frame update
     [SerializeField] GameObject projectNameObj;
+    [SerializeField] ProjectTextBehaviour _projectTextBehaviour;
+
+    string projectNameStr = "";
+    string totalStakedStr = "";
+
     void Start()
     {
         uiBackgroundImage.enabled = true;
@@ -54,32 +58,40 @@ public class MoveToPlanet : MonoBehaviour
 
     void ShowUI()
     {
-
         DOTween.ToAlpha(
             () => uiBackgroundImage.color,
             color => uiBackgroundImage.color = color,
             1f, // 目標値
-            1f // 所要時間
+            2f // 所要時間
         ).SetEase(Ease.InOutSine)
         .OnComplete(ShowText);
     }
     void ShowText()
     {
         Debug.Log("showtext called");
+        _projectTextBehaviour.SetTextBody(projectNameStr, totalStakedStr, "", "");
     }
 
-    private void OnTriggerEnter(Collider other)
+    private async void OnTriggerEnter(Collider other)
     {
         Debug.Log(other.gameObject.name);
-        move = false;
-        backfireRight.SetActive(false);
-        backfireLeft.SetActive(false);
-        afterBurnerObj.SetActive(false);
-        projectNameObj.SetActive(false);
-        ShowUI();
+
+        if (other.gameObject.CompareTag("Planet"))
+        {
+            move = false;
+            backfireRight.SetActive(false);
+            backfireLeft.SetActive(false);
+            afterBurnerObj.SetActive(false);
+            projectNameObj.SetActive(false);
+            if (other.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
+            {
+                projectNameStr = _behaviour.myProjectName;
+                string[] tempAddress = { _behaviour.myProjectAddress };
+                string resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
+                Debug.Log(resultStr);
+            }
+            ShowUI();
+        }
     }
-
-
-
 
 }
