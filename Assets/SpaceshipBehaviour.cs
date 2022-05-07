@@ -27,7 +27,7 @@ public class SpaceshipBehaviour : MonoBehaviour
         if (Physics.Raycast(ray, out hit, rayDistance))
         {
             //            Debug.Log(hit.collider.gameObject.transform.position);
-            Debug.Log(hit.collider.gameObject.name);
+            //            Debug.Log(hit.collider.gameObject.name);
             if (hit.collider.gameObject.CompareTag("Planet"))
             {
                 if (hit.collider.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class MoveToPlanet : MonoBehaviour
 {
@@ -9,11 +11,16 @@ public class MoveToPlanet : MonoBehaviour
     public GameObject backfireRight;
     public GameObject backfireLeft;
     [SerializeField] GameObject afterBurnerObj;
-
+    [SerializeField] Image uiBackgroundImage;
     bool move = false;
     // Start is called before the first frame update
+    [SerializeField] GameObject projectNameObj;
     void Start()
     {
+        uiBackgroundImage.enabled = true;
+        var c = uiBackgroundImage.color;
+        c.a = 0f; // 初期値
+        uiBackgroundImage.color = c;
 
     }
 
@@ -36,7 +43,30 @@ public class MoveToPlanet : MonoBehaviour
                 backfireRight.SetActive(false);
                 backfireLeft.SetActive(false);
                 afterBurnerObj.SetActive(false);
+                projectNameObj.SetActive(false);
+                ShowUI();
             }
         }
     }
+
+    void ShowUI()
+    {
+
+        DOTween.ToAlpha(
+            () => uiBackgroundImage.color,
+            color => uiBackgroundImage.color = color,
+            1f, // 目標値
+            1f // 所要時間
+        ).SetEase(Ease.InOutSine)
+        .OnComplete(ShowText);
+    }
+    void ShowText()
+    {
+        Debug.Log("showtext called");
+    }
+
+
+
+
+
 }
