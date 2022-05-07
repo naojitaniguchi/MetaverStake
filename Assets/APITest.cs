@@ -10,7 +10,7 @@ using TMPro;
 public class APITest : MonoBehaviour
 {
     //    string baseUrl = "https://us-central1-metaverstake.cloudfunctions.net/projects?address=0x854fb5E2E490f22c7e0b8eA0aD4cc8758EA34Bc9";
-    string baseUrl = "https://us-central1-metaverstake.cloudfunctions.net/projects?";
+    string baseUrl = "https://us-central1-metaverstake.cloudfunctions.net/projects";
     [SerializeField] string[] projAddress;
     [SerializeField] TextMeshProUGUI resultText;
 
@@ -34,33 +34,43 @@ public class APITest : MonoBehaviour
     }
 
 
-    async Task<string> FetchEventDataByTask()
-    {
-        var requestUrl = baseUrl;
-        //        Debug.Log(requestUrl);
-        UnityWebRequest req = UnityWebRequest.Get(requestUrl);
-        await req.SendWebRequest();
-        if (string.IsNullOrEmpty(req.error))
-        {
-            // Debug.Log(req.downloadHandler.text);
-            return req.downloadHandler.text;
-        }
-        else
-        {
-            Debug.Log(req.error);
-            return "レスポンスがエラー";
-        }
-    }
+    //async Task<string> FetchEventDataByTask()
+    //{
+    //    var requestUrl = baseUrl;
+    //    //        Debug.Log(requestUrl);
+    //    UnityWebRequest req = UnityWebRequest.Get(requestUrl);
+    //    await req.SendWebRequest();
+    //    if (string.IsNullOrEmpty(req.error))
+    //    {
+    //        // Debug.Log(req.downloadHandler.text);
+    //        return req.downloadHandler.text;
+    //    }
+    //    else
+    //    {
+    //        Debug.Log(req.error);
+    //        return "レスポンスがエラー";
+    //    }
+    //}
 
     async UniTask<string> FetchEventDataByUniTask(string[] addresses)
     {
         string requestUrl = baseUrl;
 
+        int tempIndex = 0;
         foreach (var eachAddress in addresses)
         {
-            requestUrl = requestUrl + "address=" + eachAddress;
+            if (tempIndex == 0)
+            {
+                requestUrl = requestUrl + "?address=" + eachAddress;
+            }
+            else
+            {
+                requestUrl = requestUrl + "&address=" + eachAddress;
+            }
+            tempIndex++;
         }
         Debug.Log(requestUrl);
+
         UnityWebRequest req = UnityWebRequest.Get(requestUrl);
         await req.SendWebRequest();
         if (string.IsNullOrEmpty(req.error))
