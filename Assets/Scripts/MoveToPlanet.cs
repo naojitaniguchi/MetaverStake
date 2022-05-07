@@ -19,6 +19,7 @@ public class MoveToPlanet : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] GameObject projectNameObj;
     [SerializeField] ProjectTextBehaviour _projectTextBehaviour;
+    [SerializeField] float distanceCriteria = 25;
 
     string projectNameStr = "";
     string totalStakedStr = "";
@@ -46,17 +47,26 @@ public class MoveToPlanet : MonoBehaviour
         {
             gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
 
-            //if (gameObject.transform.position.magnitude > distance)
-            //{
+            //星に一定の距離まで近づいたらHUDを表示させる
+            var direction = transform.forward;
+            Vector3 rayPosition = transform.position + new Vector3(0.0f, 1.0f, 0.0f);
+            Ray ray = new Ray(rayPosition, direction);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 100))
+            {
+                //                Debug.Log(hit.collider.gameObject.name);
 
+                if (hit.collider.gameObject.CompareTag("Planet"))
+                {
+                    var tempDistance = Vector3.Distance(transform.position, hit.collider.gameObject.transform.position);
+                    Debug.Log(tempDistance);
+                    if (tempDistance < distanceCriteria)
+                    {
+                        SetHUD(hit.collider.gameObject);
+                    }
 
-            //    move = false;
-            //    backfireRight.SetActive(false);
-            //    backfireLeft.SetActive(false);
-            //    afterBurnerObj.SetActive(false);
-            //    projectNameObj.SetActive(false);
-            //    ShowUI();
-            //}
+                }
+            }
         }
     }
 
@@ -82,24 +92,57 @@ public class MoveToPlanet : MonoBehaviour
 
         if (other.gameObject.CompareTag("Planet"))
         {
-            move = false;
-            backfireRight.SetActive(false);
-            backfireLeft.SetActive(false);
-            afterBurnerObj.SetActive(false);
+            StopMove();
+
+            //            SetHUD(other.gameObject);
+
+            //move = false;
+            //backfireRight.SetActive(false);
+            //backfireLeft.SetActive(false);
+            //afterBurnerObj.SetActive(false);
+            //projectNameObj.SetActive(false);
+            //if (other.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
+            //{
+            //    projectNameStr = _behaviour.myProjectName;
+            //    string[] tempAddress = { _behaviour.myProjectAddress };
+            //    string resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
+            //    Debug.Log(resultStr);
+            //    JArray a = JArray.Parse(resultStr);
+            //    Debug.Log(a[0]);
+            //    totalStakedStr = a[0]["totalStaked"].ToString();
+            //    Debug.Log(totalStakedStr);
+            //}
+            //ShowUI();
+        }
+    }
+
+    private void StopMove()
+    {
+        move = false;
+        backfireRight.SetActive(false);
+        backfireLeft.SetActive(false);
+        afterBurnerObj.SetActive(false);
+    }
+
+
+    private async void SetHUD(GameObject targetObj)
+    {
+        if (targetObj.TryGetComponent(out PlanetBehaviour _behaviour))
+        {
+            projectNameStr = _behaviour.myProjectName;
+            string[] tempAddress = { _behaviour.myProjectAddress };
+            string resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
+            Debug.Log(resultStr);
+            JArray a = JArray.Parse(resultStr);
+            Debug.Log(a[0]);
+            totalStakedStr = a[0]["totalStaked"].ToString();
+            Debug.Log(totalStakedStr);
             projectNameObj.SetActive(false);
-            if (other.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
-            {
-                projectNameStr = _behaviour.myProjectName;
-                string[] tempAddress = { _behaviour.myProjectAddress };
-                string resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
-                Debug.Log(resultStr);
-                JArray a = JArray.Parse(resultStr);
-                Debug.Log(a[0]);
-                totalStakedStr = a[0]["totalStaked"].ToString();
-                Debug.Log(totalStakedStr);
-            }
             ShowUI();
         }
     }
+
+
+
 
 }
