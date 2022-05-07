@@ -7,6 +7,7 @@ TagManager:
   - EnergyRed
   - EnergyGreen
   - EnergyBlue
+  - Planet
   layers:
   - Default
   - TransparentFX
