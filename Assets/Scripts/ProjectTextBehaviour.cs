@@ -16,6 +16,11 @@ public class ProjectTextBehaviour : MonoBehaviour
         totalStakeText.text = totalStake + " ASTAR";
         yourStakeText.text = yourStake + " ASTAR";
         YourRewardText.text = yourReward + " ASTAR";
+
+        titleText.transform.parent.gameObject.SetActive(true);
+        totalStakeText.transform.parent.gameObject.SetActive(true);
+        yourStakeText.transform.parent.gameObject.SetActive(true);
+        YourRewardText.transform.parent.gameObject.SetActive(true);
     }
 
     // Start is called before the first frame update
@@ -25,6 +30,11 @@ public class ProjectTextBehaviour : MonoBehaviour
         totalStakeText.text = "";
         yourStakeText.text = "";
         YourRewardText.text = "";
+
+        titleText.transform.parent.gameObject.SetActive(false);
+        totalStakeText.transform.parent.gameObject.SetActive(false);
+        yourStakeText.transform.parent.gameObject.SetActive(false);
+        YourRewardText.transform.parent.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
