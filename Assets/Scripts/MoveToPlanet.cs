@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+
 public class MoveToPlanet : MonoBehaviour
 {
     public float speed = 10.0f;
@@ -89,6 +93,10 @@ public class MoveToPlanet : MonoBehaviour
                 string[] tempAddress = { _behaviour.myProjectAddress };
                 string resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
                 Debug.Log(resultStr);
+                JArray a = JArray.Parse(resultStr);
+                Debug.Log(a[0]);
+                totalStakedStr = a[0]["totalStaked"].ToString();
+                Debug.Log(totalStakedStr);
             }
             ShowUI();
         }
