@@ -5,6 +5,7 @@ using UnityEngine;
 public class Enargy : MonoBehaviour
 {
     public GameObject[] capsules;
+    public float[] stakeUnit ;
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +35,8 @@ public class Enargy : MonoBehaviour
         GameObject red = Instantiate(capsules[0]);
         red.transform.position = gameObject.transform.position;
         red.transform.rotation = gameObject.transform.rotation;
+
+        PlayerManager.Instance.stakeValue += stakeUnit[0];
     }
 
     public void OnGreenButtonPressed()
@@ -41,6 +44,8 @@ public class Enargy : MonoBehaviour
         GameObject green = Instantiate(capsules[1]);
         green.transform.position = gameObject.transform.position;
         green.transform.rotation = gameObject.transform.rotation;
+
+        PlayerManager.Instance.stakeValue += stakeUnit[1];
     }
 
     public void OnBlueButtonPressed()
@@ -48,6 +53,8 @@ public class Enargy : MonoBehaviour
         GameObject blue = Instantiate(capsules[2]);
         blue.transform.position = gameObject.transform.position;
         blue.transform.rotation = gameObject.transform.rotation;
+
+        PlayerManager.Instance.stakeValue += stakeUnit[2];
     }
 
 

@@ -41,6 +41,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
     public string tentativeProjectNameInFront = ""; //回転しているときに正面にある星のプロジェクト名
     public string targetProjectName = ""; //星に近づいてHUDの準備をしている対象プロジェクト名
     public string targetProjectAddress = ""; //星に近づいてHUDの準備をしている対象のアドレス
+    public float stakeValue = 0.0f;
 
     //==================================================
     //==================================================
