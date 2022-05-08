@@ -10,12 +10,12 @@ public class ProjectTextBehaviour : MonoBehaviour
     [SerializeField] TextMeshProUGUI text_L3;
     [SerializeField] TextMeshProUGUI text_L4;
 
-    public void SetTextBody(string projectName, string totalStaked, string yourStake, string projectStaked)
+    public void SetTextBody(string str_L1, string str_L2, string str_L3, string str_L4)
     {
-        text_L1.text = totalStaked + " ASTAR";
-        text_L2.text = yourStake + " ASTAR";
-        text_L3.text = projectName;
-        text_L4.text = projectStaked + " ASTAR";
+        text_L1.text = str_L1;
+        text_L2.text = str_L2 + " ASTAR";
+        text_L3.text = str_L3 + " ASTAR";
+        text_L4.text = str_L4;
 
         text_L1.transform.parent.gameObject.SetActive(true);
         text_L2.transform.parent.gameObject.SetActive(true);
@@ -40,6 +40,5 @@ public class ProjectTextBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
     }
 }

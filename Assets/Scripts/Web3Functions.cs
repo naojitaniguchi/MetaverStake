@@ -8,7 +8,8 @@ public class Web3Functions : MonoBehaviour
 {
     public string[] projectAddressList;
 
-    [DllImport("__Internal")] private static extern string WalletAddress();
+    [SerializeField] private ProjectTextBehaviour _projectTextBehaviour;
+        [DllImport("__Internal")] private static extern string WalletAddress();
     [DllImport("__Internal")] private static extern string getStakedCountAndAmount(byte[] array);
     [DllImport("__Internal")] private static extern string TestCopyToBuffer(byte[] array);
     [DllImport("__Internal")] private static extern string stake(byte[] projectAddress, byte[] _stakeAmount);
@@ -50,6 +51,10 @@ public class Web3Functions : MonoBehaviour
 
         stake(projectAddress, stakeCount);
         PlayerManager.Instance.stakeValue = 0.0F;
+
+        // //表示を変えるとき
+        // _projectTextBehaviour.SetTextBody(PlayerManager.Instance.targetProjectName, totalStakedStr, "pending", "120%");
+
     }
 
     private IEnumerator SetTotalStake()
@@ -59,6 +64,9 @@ public class Web3Functions : MonoBehaviour
         Debug.Log("SetTotalStake");
         string result = System.Text.Encoding.UTF8.GetString(GlobalVariables.SkatedAmount);
         Debug.Log(result);
+
+        // //表示を変えるとき
+        // _projectTextBehaviour.SetTextBody(PlayerManager.Instance.targetProjectName, totalStakedStr, "pending", "120%");
 
 
     }
