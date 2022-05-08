@@ -115,7 +115,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
         Debug.Log("showtext called");
 
         //your stake, project staked はログイン前のバージョンだと値が取れないので適当な値をいれている
-        _projectTextBehaviour.SetTextBody(targetProjectName, totalStakedStr, "0.123", "0.999");
+        _projectTextBehaviour.SetTextBody(targetProjectName, totalStakedStr, "pending", "120%");
     }
 
     // private async void OnTriggerEnter(Collider other)
