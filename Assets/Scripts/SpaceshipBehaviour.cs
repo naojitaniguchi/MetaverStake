@@ -11,7 +11,6 @@ public class SpaceshipBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
     }
 
     // Update is called once per frame
@@ -33,12 +32,14 @@ public class SpaceshipBehaviour : MonoBehaviour
                 if (hit.collider.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
                 {
                     projectNameText.text = "Project\n" + _behaviour.myProjectName;
+                    PlayerManager.Instance.tentativeProjectNameInFront = _behaviour.myProjectName;
                 }
             }
         }
         else
         {
             projectNameText.text = "";
+            PlayerManager.Instance.tentativeProjectNameInFront = "";
         }
 
 

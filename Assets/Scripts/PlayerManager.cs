@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 
-public class MoveToPlanet : MonoBehaviour
+public class PlayerManager : SingleInstance<PlayerManager>
 {
     public float speed = 10.0f;
     public float distance = 70.0f;
@@ -21,11 +21,26 @@ public class MoveToPlanet : MonoBehaviour
     [SerializeField] ProjectTextBehaviour _projectTextBehaviour;
     [SerializeField] float distanceCriteria = 25;
 
-    string projectNameStr = "";
+    //    string projectNameStr = "";
     string totalStakedStr = "";
 
     bool isHudShowing = false;
 
+
+    //==================================================
+    //==================================================
+
+    ////星に近づきHUDの情報を生成したタイミングで値が記録される
+    ////たとえばこんな形でプロジェクト名とアドレスを取得できます
+    //string tempProjName = PlayerManager.Instance.targetProjectName;
+    //string tempProvAddress = PlayerManager.Instance.targetProjectAddress;
+
+    public string tentativeProjectNameInFront = "";//回転しているときに正面にある星のプロジェクト名
+    public string targetProjectName = "";//星に近づいてHUDの準備をしている対象プロジェクト名
+    public string targetProjectAddress = "";//星に近づいてHUDの準備をしている対象のアドレス
+
+    //==================================================
+    //==================================================
 
     void Start()
     {
@@ -87,7 +102,7 @@ public class MoveToPlanet : MonoBehaviour
     void ShowText()
     {
         Debug.Log("showtext called");
-        _projectTextBehaviour.SetTextBody(projectNameStr, totalStakedStr, "", "");
+        _projectTextBehaviour.SetTextBody(targetProjectName, totalStakedStr, "", "");
     }
 
     private async void OnTriggerEnter(Collider other)
@@ -134,7 +149,8 @@ public class MoveToPlanet : MonoBehaviour
         if (targetObj.TryGetComponent(out PlanetBehaviour _behaviour))
         {
             isHudShowing = true;
-            projectNameStr = _behaviour.myProjectName;
+            targetProjectName = _behaviour.myProjectName;
+            targetProjectAddress = _behaviour.myProjectAddress;
             string[] tempAddress = { _behaviour.myProjectAddress };
             string resultStr = "";
 
