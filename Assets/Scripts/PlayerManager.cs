@@ -15,11 +15,14 @@ public class PlayerManager : SingleInstance<PlayerManager>
     public GameObject backfireLeft;
     [SerializeField] GameObject afterBurnerObj;
     [SerializeField] Image uiBackgroundImage;
+
     bool move = false;
+
     // Start is called before the first frame update
     [SerializeField] GameObject projectNameObj;
     [SerializeField] ProjectTextBehaviour _projectTextBehaviour;
-    [SerializeField] float distanceCriteria = 25;
+    [SerializeField] float distanceCriteria = 25; //この距離でHUD準備、API叩くなど
+    [SerializeField] float stopCriteria = 25; //この距離で停止
 
     //    string projectNameStr = "";
     string totalStakedStr = "";
@@ -35,9 +38,9 @@ public class PlayerManager : SingleInstance<PlayerManager>
     //string tempProjName = PlayerManager.Instance.targetProjectName;
     //string tempProvAddress = PlayerManager.Instance.targetProjectAddress;
 
-    public string tentativeProjectNameInFront = "";//回転しているときに正面にある星のプロジェクト名
-    public string targetProjectName = "";//星に近づいてHUDの準備をしている対象プロジェクト名
-    public string targetProjectAddress = "";//星に近づいてHUDの準備をしている対象のアドレス
+    public string tentativeProjectNameInFront = ""; //回転しているときに正面にある星のプロジェクト名
+    public string targetProjectName = ""; //星に近づいてHUDの準備をしている対象プロジェクト名
+    public string targetProjectAddress = ""; //星に近づいてHUDの準備をしている対象のアドレス
 
     //==================================================
     //==================================================
@@ -48,7 +51,6 @@ public class PlayerManager : SingleInstance<PlayerManager>
         var c = uiBackgroundImage.color;
         c.a = 0f; // 初期値
         uiBackgroundImage.color = c;
-
     }
 
     // Update is called once per frame
@@ -61,28 +63,35 @@ public class PlayerManager : SingleInstance<PlayerManager>
             backfireLeft.SetActive(true);
             afterBurnerObj.SetActive(true);
         }
+
         if (move)
         {
             gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
 
-            if (!isHudShowing)
+            var direction = transform.forward;
+            Vector3 rayPosition = transform.position + new Vector3(0.0f, 1.0f, 0.0f);
+            Ray ray = new Ray(rayPosition, direction);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 100))
             {
-                //星に一定の距離まで近づいたらHUDを表示させる
-                var direction = transform.forward;
-                Vector3 rayPosition = transform.position + new Vector3(0.0f, 1.0f, 0.0f);
-                Ray ray = new Ray(rayPosition, direction);
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, 100))
+                if (hit.collider.gameObject.CompareTag("Planet"))
                 {
-                    if (hit.collider.gameObject.CompareTag("Planet"))
+                    var tempDistance = Vector3.Distance(transform.position, hit.collider.gameObject.transform.position);
+                    Debug.Log(tempDistance);
+
+                    //星に一定の距離まで近づいたら停止させる
+                    if (tempDistance < stopCriteria)
                     {
-                        var tempDistance = Vector3.Distance(transform.position, hit.collider.gameObject.transform.position);
-                        Debug.Log(tempDistance);
+                        StopMove();
+                    }
+
+                    if (!isHudShowing)
+                    {
+                        //星に一定の距離まで近づいたらHUDを表示させる
                         if (tempDistance < distanceCriteria)
                         {
                             SetHUD(hit.collider.gameObject);
                         }
-
                     }
                 }
             }
@@ -92,48 +101,51 @@ public class PlayerManager : SingleInstance<PlayerManager>
     void ShowUI()
     {
         DOTween.ToAlpha(
-            () => uiBackgroundImage.color,
-            color => uiBackgroundImage.color = color,
-            1f, // 目標値
-            1.6f // 所要時間
-        ).SetEase(Ease.InOutSine)
-        .OnComplete(ShowText);
+                () => uiBackgroundImage.color,
+                color => uiBackgroundImage.color = color,
+                1f, // 目標値
+                1.6f // 所要時間
+            ).SetEase(Ease.InOutSine)
+            .OnComplete(ShowText);
     }
+
     void ShowText()
     {
         Debug.Log("showtext called");
-        _projectTextBehaviour.SetTextBody(targetProjectName, totalStakedStr, "", "");
+
+        //your stake, project staked はログイン前のバージョンだと値が取れないので適当な値をいれている
+        _projectTextBehaviour.SetTextBody(targetProjectName, totalStakedStr, "0.123", "0.999");
     }
 
-    private async void OnTriggerEnter(Collider other)
-    {
-        Debug.Log(other.gameObject.name);
-
-        if (other.gameObject.CompareTag("Planet"))
-        {
-            StopMove();
-
-            //            SetHUD(other.gameObject);
-
-            //move = false;
-            //backfireRight.SetActive(false);
-            //backfireLeft.SetActive(false);
-            //afterBurnerObj.SetActive(false);
-            //projectNameObj.SetActive(false);
-            //if (other.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
-            //{
-            //    projectNameStr = _behaviour.myProjectName;
-            //    string[] tempAddress = { _behaviour.myProjectAddress };
-            //    string resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
-            //    Debug.Log(resultStr);
-            //    JArray a = JArray.Parse(resultStr);
-            //    Debug.Log(a[0]);
-            //    totalStakedStr = a[0]["totalStaked"].ToString();
-            //    Debug.Log(totalStakedStr);
-            //}
-            //ShowUI();
-        }
-    }
+    // private async void OnTriggerEnter(Collider other)
+    // {
+    //     Debug.Log(other.gameObject.name);
+    //
+    //     if (other.gameObject.CompareTag("Planet"))
+    //     {
+    //         StopMove();
+    //
+    //         //            SetHUD(other.gameObject);
+    //
+    //         //move = false;
+    //         //backfireRight.SetActive(false);
+    //         //backfireLeft.SetActive(false);
+    //         //afterBurnerObj.SetActive(false);
+    //         //projectNameObj.SetActive(false);
+    //         //if (other.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
+    //         //{
+    //         //    projectNameStr = _behaviour.myProjectName;
+    //         //    string[] tempAddress = { _behaviour.myProjectAddress };
+    //         //    string resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
+    //         //    Debug.Log(resultStr);
+    //         //    JArray a = JArray.Parse(resultStr);
+    //         //    Debug.Log(a[0]);
+    //         //    totalStakedStr = a[0]["totalStaked"].ToString();
+    //         //    Debug.Log(totalStakedStr);
+    //         //}
+    //         //ShowUI();
+    //     }
+    // }
 
     private void StopMove()
     {
@@ -169,6 +181,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
                 Debug.LogError(E.Message);
                 totalStakedStr = "!!! API error";
             }
+
             projectNameObj.SetActive(false);
             ShowUI();
         }

@@ -5,36 +5,36 @@ using TMPro;
 
 public class ProjectTextBehaviour : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI titleText;
-    [SerializeField] TextMeshProUGUI totalStakeText;
-    [SerializeField] TextMeshProUGUI yourStakeText;
-    [SerializeField] TextMeshProUGUI YourRewardText;
+    [SerializeField] TextMeshProUGUI text_L1;
+    [SerializeField] TextMeshProUGUI text_L2;
+    [SerializeField] TextMeshProUGUI text_L3;
+    [SerializeField] TextMeshProUGUI text_L4;
 
-    public void SetTextBody(string title, string totalStake, string yourStake, string yourReward)
+    public void SetTextBody(string projectName, string totalStaked, string yourStake, string projectStaked)
     {
-        titleText.text = title;
-        totalStakeText.text = totalStake + " ASTAR";
-        yourStakeText.text = yourStake + " ASTAR";
-        YourRewardText.text = yourReward + " ASTAR";
+        text_L1.text = totalStaked + " ASTAR";
+        text_L2.text = yourStake + " ASTAR";
+        text_L3.text = projectName;
+        text_L4.text = projectStaked + " ASTAR";
 
-        titleText.transform.parent.gameObject.SetActive(true);
-        totalStakeText.transform.parent.gameObject.SetActive(true);
-        yourStakeText.transform.parent.gameObject.SetActive(true);
-        YourRewardText.transform.parent.gameObject.SetActive(true);
+        text_L1.transform.parent.gameObject.SetActive(true);
+        text_L2.transform.parent.gameObject.SetActive(true);
+        text_L3.transform.parent.gameObject.SetActive(true);
+        text_L4.transform.parent.gameObject.SetActive(true);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        titleText.text = "";
-        totalStakeText.text = "";
-        yourStakeText.text = "";
-        YourRewardText.text = "";
+        text_L1.text = "";
+        text_L2.text = "";
+        text_L3.text = "";
+        text_L4.text = "";
 
-        titleText.transform.parent.gameObject.SetActive(false);
-        totalStakeText.transform.parent.gameObject.SetActive(false);
-        yourStakeText.transform.parent.gameObject.SetActive(false);
-        YourRewardText.transform.parent.gameObject.SetActive(false);
+        text_L1.transform.parent.gameObject.SetActive(false);
+        text_L2.transform.parent.gameObject.SetActive(false);
+        text_L3.transform.parent.gameObject.SetActive(false);
+        text_L4.transform.parent.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
