@@ -13,8 +13,8 @@ public class ProjectTextBehaviour : MonoBehaviour
     public void SetTextBody(string str_L1, string str_L2, string str_L3, string str_L4)
     {
         text_L1.text = str_L1;
-        text_L2.text = str_L2 + " ASTAR";
-        text_L3.text = str_L3 + " ASTAR";
+        text_L2.text = str_L2;
+        text_L3.text = str_L3;
         text_L4.text = str_L4;
 
         text_L1.transform.parent.gameObject.SetActive(true);

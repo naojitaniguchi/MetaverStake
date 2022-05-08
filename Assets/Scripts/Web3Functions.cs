@@ -118,6 +118,9 @@ public class Web3Functions : MonoBehaviour
             Debug.Log(request.downloadHandler.text);
             ProjectStatusJson[] test = JsonConvert.DeserializeObject<ProjectStatusJson[]>(request.downloadHandler.text);
 
+            float tempTotalStake = 0;
+            float tempProjectStake = 0;
+
             Debug.Log(test.Length);
             for (int i = 0; i < test.Length; i++)
             {
@@ -127,9 +130,20 @@ public class Web3Functions : MonoBehaviour
                 Planets[i].GetComponent<PlanetBehaviour>().totalStaked = test[i].totalStaked;
                 Planets[i].GetComponent<PlanetBehaviour>().apy = test[i].apy;
 
+                tempTotalStake += float.Parse(test[i].totalStaked.ToString());
+
+                if (projectAddressList[i] == PlayerManager.Instance.targetProjectAddress)
+                {
+                    tempProjectStake = float.Parse(test[i].totalStaked.ToString());
+                }
+
                 //GlobalVariables.ProjectStatus[i].totalStaked = test[i].totalStaked;
                 //GlobalVariables.ProjectStatus[i].apy = test[i].apy;
             }
+
+            // //表示を更新
+            _projectTextBehaviour.SetTextBody(PlayerManager.Instance.targetProjectName, tempProjectStake.ToString()+ " ASTAR", tempTotalStake.ToString()+ " ASTAR", "120%");
+
         }
 
     }

@@ -78,7 +78,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
                 if (hit.collider.gameObject.CompareTag("Planet"))
                 {
                     var tempDistance = Vector3.Distance(transform.position, hit.collider.gameObject.transform.position);
-                    Debug.Log(tempDistance);
+//                    Debug.Log(tempDistance);
 
                     //星に一定の距離まで近づいたら停止させる
                     if (tempDistance < stopCriteria)
@@ -115,7 +115,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
         Debug.Log("showtext called");
 
         //your stake, project staked はログイン前のバージョンだと値が取れないので適当な値をいれている
-        _projectTextBehaviour.SetTextBody(targetProjectName, totalStakedStr, "pending", "120%");
+        _projectTextBehaviour.SetTextBody(targetProjectName, totalStakedStr + " ASTAR", "pending", "120%");
     }
 
     // private async void OnTriggerEnter(Collider other)
