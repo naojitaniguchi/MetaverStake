@@ -13,7 +13,7 @@ public class Web3Functions : MonoBehaviour
     public GameObject[] Planets;
 
     [SerializeField] private ProjectTextBehaviour _projectTextBehaviour;
-        [DllImport("__Internal")] private static extern string WalletAddress();
+    [DllImport("__Internal")] private static extern string WalletAddress();
     [DllImport("__Internal")] private static extern string getStakedCountAndAmount(byte[] array);
     [DllImport("__Internal")] private static extern string TestCopyToBuffer(byte[] array);
     [DllImport("__Internal")] private static extern string stake(byte[] projectAddress, byte[] _stakeAmount);
@@ -113,6 +113,9 @@ public class Web3Functions : MonoBehaviour
         {
             //4.エラー確認
             Debug.Log(request.error);
+
+            // //テキストは仮にエラー表示
+            _projectTextBehaviour.SetTextBody("Network error", PlayerManager.Instance.targetProjectName, "Error at Update", "Network error");
         }
         else
         {
@@ -144,7 +147,7 @@ public class Web3Functions : MonoBehaviour
             }
 
             // //表示を更新
-            _projectTextBehaviour.SetTextBody(PlayerManager.Instance.targetProjectName, tempProjectStakeStr + " ASTAR", tempTotalStake.ToString()+ " ASTAR", "120%");
+            _projectTextBehaviour.SetTextBody(tempTotalStake.ToString() + " ASTAR", PlayerManager.Instance.targetProjectName, tempProjectStakeStr + " ASTAR", "120%");
 
         }
 

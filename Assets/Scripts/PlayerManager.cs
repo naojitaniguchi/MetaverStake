@@ -24,6 +24,9 @@ public class PlayerManager : SingleInstance<PlayerManager>
     [SerializeField] float distanceCriteria = 25; //この距離でHUD準備、API叩くなど
     [SerializeField] float stopCriteria = 25; //この距離で停止
 
+    [SerializeField] Web3Functions _web3Functions;
+
+
     //    string projectNameStr = "";
     string totalStakedStr = "";
 
@@ -101,7 +104,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
         }
     }
 
-    void ShowUI()
+    void ShowUI(TweenCallback callback)
     {
         DOTween.ToAlpha(
                 () => uiBackgroundImage.color,
@@ -109,16 +112,24 @@ public class PlayerManager : SingleInstance<PlayerManager>
                 1f, // 目標値
                 1.6f // 所要時間
             ).SetEase(Ease.InOutSine)
-            .OnComplete(ShowText);
+            .OnComplete(callback);
     }
 
     void ShowText()
     {
         Debug.Log("showtext called");
 
-        //your stake, project staked はログイン前のバージョンだと値が取れないので適当な値をいれている
-        _projectTextBehaviour.SetTextBody(targetProjectName, totalStakedStr + " ASTAR", "pending", "120%");
+        _projectTextBehaviour.SetTextBody("total stake pending", targetProjectName, totalStakedStr + " ASTAR", "120%");
     }
+
+
+    void ShowErrorText()
+    {
+        Debug.Log("ShowErrorText called");
+
+        _projectTextBehaviour.SetTextBody("Network error", targetProjectName, "Error at HUD", "Network error");
+    }
+
 
     // private async void OnTriggerEnter(Collider other)
     // {
@@ -177,16 +188,18 @@ public class PlayerManager : SingleInstance<PlayerManager>
                 Debug.Log(a[0]);
                 totalStakedStr = a[0]["totalStaked"].ToString();
                 Debug.Log(totalStakedStr);
+                projectNameObj.SetActive(false);
+                ShowUI(ShowText);
             }
             catch (System.Exception E)
             {
                 Debug.LogError("API叩く際にエラー");
                 Debug.LogError(E.Message);
                 totalStakedStr = "!!! API error";
+                projectNameObj.SetActive(false);
+                ShowUI(ShowErrorText);
             }
 
-            projectNameObj.SetActive(false);
-            ShowUI();
         }
     }
 }
