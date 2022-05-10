@@ -78,11 +78,12 @@ public class PlayerManager : SingleInstance<PlayerManager>
                 if (hit.collider.gameObject.CompareTag("Planet"))
                 {
                     var tempDistance = Vector3.Distance(transform.position, hit.collider.gameObject.transform.position);
-//                    Debug.Log(tempDistance);
+                    // Debug.Log(tempDistance);
 
                     //星に一定の距離まで近づいたら停止させる
                     if (tempDistance < stopCriteria)
                     {
+                        Debug.Log("Stop Move at " + tempDistance);
                         StopMove();
                     }
 
@@ -91,6 +92,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
                         //星に一定の距離まで近づいたらHUDを表示させる
                         if (tempDistance < distanceCriteria)
                         {
+                            Debug.Log("Prep HUD at " + tempDistance);
                             SetHUD(hit.collider.gameObject);
                         }
                     }

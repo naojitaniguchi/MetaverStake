@@ -6,7 +6,7 @@ public class PlanetBehaviour : MonoBehaviour
 {
     public string myProjectName;
     public string myProjectAddress;
-    public float totalStaked;
+    public double totalStaked;
     public float apy;
     // Start is called before the first frame update
     void Start()

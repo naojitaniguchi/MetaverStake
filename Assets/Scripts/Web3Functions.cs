@@ -77,6 +77,8 @@ public class Web3Functions : MonoBehaviour
 
     public void GetProjectStatus()
     {
+        Debug.Log("GetProjectStatus called");
+
         // e.g.curl "https://us-central1-metaverstake.cloudfunctions.net/projects?address=0x854fb5E2E490f22c7e0b8eA0aD4cc8758EA34Bc9&address=0x92561F28Ec438Ee9831D00D1D59fbDC981b762b2"
         // -> [{ "totalStaked":0.0011,"apy":120},{ "totalStaked":0.1,"apy":120}]
 
@@ -118,8 +120,8 @@ public class Web3Functions : MonoBehaviour
             Debug.Log(request.downloadHandler.text);
             ProjectStatusJson[] test = JsonConvert.DeserializeObject<ProjectStatusJson[]>(request.downloadHandler.text);
 
-            float tempTotalStake = 0;
-            float tempProjectStake = 0;
+            double tempTotalStake = 0;
+            string tempProjectStakeStr = "";
 
             Debug.Log(test.Length);
             for (int i = 0; i < test.Length; i++)
@@ -130,11 +132,11 @@ public class Web3Functions : MonoBehaviour
                 Planets[i].GetComponent<PlanetBehaviour>().totalStaked = test[i].totalStaked;
                 Planets[i].GetComponent<PlanetBehaviour>().apy = test[i].apy;
 
-                tempTotalStake += float.Parse(test[i].totalStaked.ToString());
+                tempTotalStake += test[i].totalStaked;
 
                 if (projectAddressList[i] == PlayerManager.Instance.targetProjectAddress)
                 {
-                    tempProjectStake = float.Parse(test[i].totalStaked.ToString());
+                    tempProjectStakeStr = test[i].totalStaked.ToString();
                 }
 
                 //GlobalVariables.ProjectStatus[i].totalStaked = test[i].totalStaked;
@@ -142,7 +144,7 @@ public class Web3Functions : MonoBehaviour
             }
 
             // //表示を更新
-            _projectTextBehaviour.SetTextBody(PlayerManager.Instance.targetProjectName, tempProjectStake.ToString()+ " ASTAR", tempTotalStake.ToString()+ " ASTAR", "120%");
+            _projectTextBehaviour.SetTextBody(PlayerManager.Instance.targetProjectName, tempProjectStakeStr + " ASTAR", tempTotalStake.ToString()+ " ASTAR", "120%");
 
         }
 

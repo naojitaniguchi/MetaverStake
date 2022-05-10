@@ -12,7 +12,7 @@ public class APIManager : SingleInstance<APIManager>
     //    string baseUrl = "https://us-central1-metaverstake.cloudfunctions.net/projects?address=0x854fb5E2E490f22c7e0b8eA0aD4cc8758EA34Bc9";
     string baseUrl = "https://us-central1-metaverstake.cloudfunctions.net/projects";
     [SerializeField] string[] projAddress;
-    [SerializeField] TextMeshProUGUI resultText;
+//    [SerializeField] TextMeshProUGUI resultText;
 
     // Start is called before the first frame update
     void Start()
@@ -30,7 +30,7 @@ public class APIManager : SingleInstance<APIManager>
     {
         string result = await FetchEventDataByUniTask(projAddress);
         Debug.Log("結果：" + result);
-        resultText.text = result;
+//        resultText.text = result;
     }
 
 
