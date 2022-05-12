@@ -55,10 +55,6 @@ public class Web3Functions : MonoBehaviour
 
         stake(projectAddress, stakeCount);
         PlayerManager.Instance.stakeValue = 0.0F;
-
-        // //表示を変えるとき
-        // _projectTextBehaviour.SetTextBody(PlayerManager.Instance.targetProjectName, totalStakedStr, "pending", "120%");
-
     }
 
     private IEnumerator SetTotalStake()
@@ -68,11 +64,6 @@ public class Web3Functions : MonoBehaviour
         Debug.Log("SetTotalStake");
         string result = System.Text.Encoding.UTF8.GetString(GlobalVariables.SkatedAmount);
         Debug.Log(result);
-
-        // //表示を変えるとき
-        // _projectTextBehaviour.SetTextBody(PlayerManager.Instance.targetProjectName, totalStakedStr, "pending", "120%");
-
-
     }
 
     public void GetProjectStatus()
@@ -115,7 +106,7 @@ public class Web3Functions : MonoBehaviour
             Debug.Log(request.error);
 
             // //テキストは仮にエラー表示
-            _projectTextBehaviour.SetTextBody("Network error", PlayerManager.Instance.targetProjectName, "Error at Update", "Network error");
+            _projectTextBehaviour.SetTextBody("Analyzing...", PlayerManager.Instance.targetProjectName, "Analyzing...(U)", "Analyzing...(" + Time.realtimeSinceStartup.ToString("F0") + ")");
         }
         else
         {

@@ -125,9 +125,10 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     void ShowErrorText()
     {
+        //APIたたいてエラーの場合
         Debug.Log("ShowErrorText called");
 
-        _projectTextBehaviour.SetTextBody("Network error", targetProjectName, "Error at HUD", "Network error");
+        _projectTextBehaviour.SetTextBody("Analyzing...", targetProjectName, "Analyzing...(H)", "Analyzing...(" + Time.realtimeSinceStartup.ToString("F0") + ")");
     }
 
 
