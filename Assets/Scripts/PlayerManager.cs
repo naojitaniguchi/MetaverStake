@@ -26,7 +26,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
     bool move = false;
 
     [SerializeField] ProjectTextBehaviour _projectTextBehaviour;
-    [SerializeField] float distanceCriteria = 25; //この距離でHUD準備、API叩くなど
+    [SerializeField] float hudDistanceCriteria = 25; //この距離でHUD準備、API叩くなど
     [SerializeField] float stopCriteria = 25; //この距離で停止
 
     [SerializeField] Web3Functions _web3Functions;
@@ -93,10 +93,10 @@ public class PlayerManager : SingleInstance<PlayerManager>
                     if (!isHudShowing)
                     {
                         //星に一定の距離まで近づいたらHUDを表示させる
-                        if (tempDistance < distanceCriteria)
+                        if (tempDistance < hudDistanceCriteria)
                         {
-                            Debug.Log("Prep HUD at " + tempDistance);
-                            SetHUD(hit.collider.gameObject);
+//                            Debug.Log("Prep HUD at " + tempDistance);
+                            ShowHUD();
                         }
                     }
                 }
@@ -138,13 +138,14 @@ public class PlayerManager : SingleInstance<PlayerManager>
             //Spacekeyを押して前に進めるのはプロジェクトが正面にあるときだけ
             if (Input.GetKeyDown(KeyCode.Space) && tentativeProjectNameInFront != "")
             {
-                if (tentativeProjectNameInFront != targetProjectName)
+                if (targetProjectName == "" //最初のターゲットがまだからのときは前進できる
+                    || tentativeProjectNameInFront != targetProjectName) // 2回目以降は別プロジェクト名のときだけ
                 {
-                    if (isHudShowing)//HUD表示中ならFadeoutさせる、テキストも消す
+                    if (isHudShowing) //HUD表示中ならFadeoutさせる、テキストも消す
                     {
-                        _projectTextBehaviour.ResetTexts();
-                        FadeHUD(0, 1f);
+                        HideHUD();
                     }
+
                     move = true;
                     pushToStartObj.SetActive(false);
                     backfireRight.SetActive(true);
@@ -159,6 +160,21 @@ public class PlayerManager : SingleInstance<PlayerManager>
         }
     }
 
+
+    private void ShowHUD()
+    {
+        isHudShowing = true;
+        FadeHUD(1, 1.6f, ShowText);
+    }
+
+    private void HideHUD()
+    {
+        _projectTextBehaviour.ResetTexts();
+        FadeHUD(0, 1f);
+        isHudShowing = false;
+    }
+
+
     void FadeHUD(float endValue, float duration, TweenCallback callback = null)
     {
         DOTween.ToAlpha(
@@ -169,10 +185,6 @@ public class PlayerManager : SingleInstance<PlayerManager>
             ).SetEase(Ease.InOutSine)
             .OnComplete(callback);
     }
-
-
-
-
 
 
     void ShowText()
@@ -193,7 +205,6 @@ public class PlayerManager : SingleInstance<PlayerManager>
     }
 
 
-
     private void StopMove()
     {
         move = false;
@@ -202,43 +213,6 @@ public class PlayerManager : SingleInstance<PlayerManager>
         afterBurnerObj.SetActive(false);
     }
 
-
-    private async void SetHUD(GameObject targetObj)
-    {
-        isHudShowing = true;
-//        pushToStartObj.SetActive(false);
-        FadeHUD(1, 1.6f, ShowText);
-
-
-        // if (targetObj.TryGetComponent(out PlanetBehaviour _behaviour))
-        // {
-        //     isHudShowing = true;
-        //     targetProjectName = _behaviour.myProjectName;
-        //     targetProjectAddress = _behaviour.myProjectAddress;
-        //     string[] tempAddress = { _behaviour.myProjectAddress };
-        //     string resultStr = "";
-        //
-        //     try
-        //     {
-        //         resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
-        //         Debug.Log(resultStr);
-        //         JArray a = JArray.Parse(resultStr);
-        //         Debug.Log(a[0]);
-        //         totalStakedStr = a[0]["totalStaked"].ToString();
-        //         Debug.Log(totalStakedStr);
-        //         pushToStartObj.SetActive(false);
-        //         FadeHUD(1, 1.6f, ShowText);
-        //     }
-        //     catch (System.Exception E)
-        //     {
-        //         Debug.LogError("API叩く際にエラー");
-        //         Debug.LogError(E.Message);
-        //         totalStakedStr = "!!! API error";
-        //         pushToStartObj.SetActive(false);
-        //         FadeHUD(1, 1.6f,ShowErrorText);
-        //     }
-        // }
-    }
 
     private async void SetProjectDataText(GameObject targetObj)
     {
@@ -271,6 +245,4 @@ public class PlayerManager : SingleInstance<PlayerManager>
             }
         }
     }
-
-
 }
