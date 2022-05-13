@@ -219,7 +219,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
     {
         Debug.Log("showtext called");
 
-        _projectTextBehaviour.SetTextBody("total stake pending", targetProjectName, totalStakedStr + " ASTAR", "120%");
+        _projectTextBehaviour.SetTextBody("total stake pending", targetProjectName, totalStakedStr + " ASTR", "120%");
     }
 
 

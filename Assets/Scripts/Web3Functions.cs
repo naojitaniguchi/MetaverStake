@@ -138,7 +138,7 @@ public class Web3Functions : MonoBehaviour
             }
 
             // //表示を更新
-            _projectTextBehaviour.SetTextBody(tempTotalStake.ToString() + " ASTAR", PlayerManager.Instance.targetProjectName, tempProjectStakeStr + " ASTAR", "120%");
+            _projectTextBehaviour.SetTextBody(tempTotalStake.ToString() + " ASTR", PlayerManager.Instance.targetProjectName, tempProjectStakeStr + " ASTR", "120%");
 
         }
 
