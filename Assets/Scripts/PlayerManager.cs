@@ -124,6 +124,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
                     {
                         projectNameText.text = "Project\n" + _behaviour.myProjectName;
                         pushToStartObj.SetActive(true);
+                        projectNameText.gameObject.SetActive(true);
                         tentativeProjectNameInFront = _behaviour.myProjectName;
                     }
                 }
@@ -164,6 +165,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
     private void ShowHUD()
     {
         isHudShowing = true;
+        projectNameText.gameObject.SetActive(false);
         FadeHUD(1, 1.6f, ShowText);
     }
 
@@ -171,6 +173,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
     {
         _projectTextBehaviour.ResetTexts();
         FadeHUD(0, 1f);
+        projectNameText.gameObject.SetActive(true);
         isHudShowing = false;
     }
 
