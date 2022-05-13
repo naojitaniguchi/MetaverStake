@@ -62,7 +62,6 @@ public class PlayerManager : SingleInstance<PlayerManager>
         var c = uiBackgroundImage.color;
         c.a = 0f; // 初期値
         uiBackgroundImage.color = c;
-
     }
 
     // Update is called once per frame
@@ -110,18 +109,15 @@ public class PlayerManager : SingleInstance<PlayerManager>
             {
                 gameObject.transform.Rotate(0.0f, rotationSpeed * Time.deltaTime, 0.0f);
             }
+
             if (Input.GetKey(KeyCode.RightArrow))
             {
                 gameObject.transform.Rotate(0.0f, -1.0f * rotationSpeed * Time.deltaTime, 0.0f);
             }
 
 
-
-
             if (raycastResult)
             {
-                //            Debug.Log(hit.collider.gameObject.transform.position);
-                //            Debug.Log(hit.collider.gameObject.name);
                 if (hit.collider.gameObject.CompareTag("Planet"))
                 {
                     if (hit.collider.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
@@ -142,78 +138,42 @@ public class PlayerManager : SingleInstance<PlayerManager>
             //Spacekeyを押して前に進めるのはプロジェクトが正面にあるときだけ
             if (Input.GetKeyDown(KeyCode.Space) && tentativeProjectNameInFront != "")
             {
-                move = true;
-                backfireRight.SetActive(true);
-                backfireLeft.SetActive(true);
-                afterBurnerObj.SetActive(true);
-                pushToStartObj.SetActive(false);
+                if (tentativeProjectNameInFront != targetProjectName)
+                {
+                    if (isHudShowing)//HUD表示中ならFadeoutさせる、テキストも消す
+                    {
+                        _projectTextBehaviour.ResetTexts();
+                        FadeHUD(0, 1f);
+                    }
+                    move = true;
+                    pushToStartObj.SetActive(false);
+                    backfireRight.SetActive(true);
+                    backfireLeft.SetActive(true);
+                    afterBurnerObj.SetActive(true);
+                    pushToStartObj.SetActive(false);
+
+                    //テキストデータは早めに取得しておく
+                    SetProjectDataText(hit.collider.gameObject);
+                }
             }
-
         }
-
-
-        // if (Physics.Raycast(ray, out hit, rayDistance))
-        // {
-        //     //            Debug.Log(hit.collider.gameObject.transform.position);
-        //     //            Debug.Log(hit.collider.gameObject.name);
-        //     if (hit.collider.gameObject.CompareTag("Planet"))
-        //     {
-        //         if (hit.collider.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
-        //         {
-        //             projectNameText.text = "Project\n" + _behaviour.myProjectName;
-        //             PlayerManager.Instance.tentativeProjectNameInFront = _behaviour.myProjectName;
-        //         }
-        //     }
-        // }
-        // else
-        // {
-        //     projectNameText.text = "";
-        //     PlayerManager.Instance.tentativeProjectNameInFront = "";
-        // }
-
-
-        // if (move)
-        // {
-        //     gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
-        //
-        //     if (Physics.Raycast(ray, out hit, 100))
-        //     {
-        //         if (hit.collider.gameObject.CompareTag("Planet"))
-        //         {
-        //             var tempDistance = Vector3.Distance(transform.position, hit.collider.gameObject.transform.position);
-        //             // Debug.Log(tempDistance);
-        //
-        //             //星に一定の距離まで近づいたら停止させる
-        //             if (tempDistance < stopCriteria)
-        //             {
-        //                 Debug.Log("Stop Move at " + tempDistance);
-        //                 StopMove();
-        //             }
-        //
-        //             if (!isHudShowing)
-        //             {
-        //                 //星に一定の距離まで近づいたらHUDを表示させる
-        //                 if (tempDistance < distanceCriteria)
-        //                 {
-        //                     Debug.Log("Prep HUD at " + tempDistance);
-        //                     SetHUD(hit.collider.gameObject);
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
     }
 
-    void ShowUI(TweenCallback callback)
+    void FadeHUD(float endValue, float duration, TweenCallback callback = null)
     {
         DOTween.ToAlpha(
                 () => uiBackgroundImage.color,
                 color => uiBackgroundImage.color = color,
-                1f, // 目標値
-                1.6f // 所要時間
+                endValue, // 目標値
+                duration // 所要時間
             ).SetEase(Ease.InOutSine)
             .OnComplete(callback);
     }
+
+
+
+
+
 
     void ShowText()
     {
@@ -233,35 +193,6 @@ public class PlayerManager : SingleInstance<PlayerManager>
     }
 
 
-    // private async void OnTriggerEnter(Collider other)
-    // {
-    //     Debug.Log(other.gameObject.name);
-    //
-    //     if (other.gameObject.CompareTag("Planet"))
-    //     {
-    //         StopMove();
-    //
-    //         //            SetHUD(other.gameObject);
-    //
-    //         //move = false;
-    //         //backfireRight.SetActive(false);
-    //         //backfireLeft.SetActive(false);
-    //         //afterBurnerObj.SetActive(false);
-    //         //projectNameObj.SetActive(false);
-    //         //if (other.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
-    //         //{
-    //         //    projectNameStr = _behaviour.myProjectName;
-    //         //    string[] tempAddress = { _behaviour.myProjectAddress };
-    //         //    string resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
-    //         //    Debug.Log(resultStr);
-    //         //    JArray a = JArray.Parse(resultStr);
-    //         //    Debug.Log(a[0]);
-    //         //    totalStakedStr = a[0]["totalStaked"].ToString();
-    //         //    Debug.Log(totalStakedStr);
-    //         //}
-    //         //ShowUI();
-    //     }
-    // }
 
     private void StopMove()
     {
@@ -274,9 +205,46 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     private async void SetHUD(GameObject targetObj)
     {
+        isHudShowing = true;
+//        pushToStartObj.SetActive(false);
+        FadeHUD(1, 1.6f, ShowText);
+
+
+        // if (targetObj.TryGetComponent(out PlanetBehaviour _behaviour))
+        // {
+        //     isHudShowing = true;
+        //     targetProjectName = _behaviour.myProjectName;
+        //     targetProjectAddress = _behaviour.myProjectAddress;
+        //     string[] tempAddress = { _behaviour.myProjectAddress };
+        //     string resultStr = "";
+        //
+        //     try
+        //     {
+        //         resultStr = await APIManager.Instance.FetchEventDataByUniTask(tempAddress);
+        //         Debug.Log(resultStr);
+        //         JArray a = JArray.Parse(resultStr);
+        //         Debug.Log(a[0]);
+        //         totalStakedStr = a[0]["totalStaked"].ToString();
+        //         Debug.Log(totalStakedStr);
+        //         pushToStartObj.SetActive(false);
+        //         FadeHUD(1, 1.6f, ShowText);
+        //     }
+        //     catch (System.Exception E)
+        //     {
+        //         Debug.LogError("API叩く際にエラー");
+        //         Debug.LogError(E.Message);
+        //         totalStakedStr = "!!! API error";
+        //         pushToStartObj.SetActive(false);
+        //         FadeHUD(1, 1.6f,ShowErrorText);
+        //     }
+        // }
+    }
+
+    private async void SetProjectDataText(GameObject targetObj)
+    {
         if (targetObj.TryGetComponent(out PlanetBehaviour _behaviour))
         {
-            isHudShowing = true;
+            // isHudShowing = true;
             targetProjectName = _behaviour.myProjectName;
             targetProjectAddress = _behaviour.myProjectAddress;
             string[] tempAddress = { _behaviour.myProjectAddress };
@@ -290,17 +258,19 @@ public class PlayerManager : SingleInstance<PlayerManager>
                 Debug.Log(a[0]);
                 totalStakedStr = a[0]["totalStaked"].ToString();
                 Debug.Log(totalStakedStr);
-                pushToStartObj.SetActive(false);
-                ShowUI(ShowText);
+                // pushToStartObj.SetActive(false);
+                // FadeHUD(1, 1.6f, ShowText);
             }
             catch (System.Exception E)
             {
                 Debug.LogError("API叩く際にエラー");
                 Debug.LogError(E.Message);
-                totalStakedStr = "!!! API error";
-                pushToStartObj.SetActive(false);
-                ShowUI(ShowErrorText);
+//                totalStakedStr = "!!! API error";
+                // pushToStartObj.SetActive(false);
+                // FadeHUD(1, 1.6f,ShowErrorText);
             }
         }
     }
+
+
 }

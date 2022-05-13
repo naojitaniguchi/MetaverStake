@@ -26,6 +26,11 @@ public class ProjectTextBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ResetTexts();
+    }
+
+    public void ResetTexts()
+    {
         text_L1.text = "";
         text_L2.text = "";
         text_L3.text = "";
