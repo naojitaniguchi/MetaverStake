@@ -71,13 +71,61 @@ public class PlayerManager : SingleInstance<PlayerManager>
         Vector3 rayPosition = transform.position + new Vector3(0.0f, 1.0f, 0.0f);
         Ray ray = new Ray(rayPosition, direction);
         RaycastHit hit;
+        var raycastResult = Physics.Raycast(ray, out hit, rayDistance);
 
         if (move)
         {
+            gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
+
+            if (raycastResult)
+            {
+                if (hit.collider.gameObject.CompareTag("Planet"))
+                {
+                    var tempDistance = Vector3.Distance(transform.position, hit.collider.gameObject.transform.position);
+                    //星に一定の距離まで近づいたら停止させる
+                    if (tempDistance < stopCriteria)
+                    {
+                        Debug.Log("Stop Move at " + tempDistance);
+                        StopMove();
+                    }
+                    if (!isHudShowing)
+                    {
+                        //星に一定の距離まで近づいたらHUDを表示させる
+                        if (tempDistance < distanceCriteria)
+                        {
+                            Debug.Log("Prep HUD at " + tempDistance);
+                            SetHUD(hit.collider.gameObject);
+                        }
+                    }
+                }
+            }
+
 
         }
-        else//動いていないときだけキー入力をうける、動いている途中で向きがかわると処理が面倒なので
+        else //動いていないときだけキー入力をうける、動いている途中で向きがかわると処理が面倒なので
         {
+            if (raycastResult)
+            {
+                //            Debug.Log(hit.collider.gameObject.transform.position);
+                //            Debug.Log(hit.collider.gameObject.name);
+                if (hit.collider.gameObject.CompareTag("Planet"))
+                {
+                    if (hit.collider.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
+                    {
+                        projectNameText.text = "Project\n" + _behaviour.myProjectName;
+                        PlayerManager.Instance.tentativeProjectNameInFront = _behaviour.myProjectName;
+                    }
+                }
+            }
+            else
+            {
+                projectNameText.text = "";
+                tentativeProjectNameInFront = "";
+            }
+
+
+
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 move = true;
@@ -90,74 +138,64 @@ public class PlayerManager : SingleInstance<PlayerManager>
             {
                 gameObject.transform.Rotate(0.0f, rotationSpeed * Time.deltaTime, 0.0f);
             }
+
             if (Input.GetKey(KeyCode.RightArrow))
             {
                 gameObject.transform.Rotate(0.0f, -1.0f * rotationSpeed * Time.deltaTime, 0.0f);
             }
-
         }
 
 
+        // if (Physics.Raycast(ray, out hit, rayDistance))
+        // {
+        //     //            Debug.Log(hit.collider.gameObject.transform.position);
+        //     //            Debug.Log(hit.collider.gameObject.name);
+        //     if (hit.collider.gameObject.CompareTag("Planet"))
+        //     {
+        //         if (hit.collider.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
+        //         {
+        //             projectNameText.text = "Project\n" + _behaviour.myProjectName;
+        //             PlayerManager.Instance.tentativeProjectNameInFront = _behaviour.myProjectName;
+        //         }
+        //     }
+        // }
+        // else
+        // {
+        //     projectNameText.text = "";
+        //     PlayerManager.Instance.tentativeProjectNameInFront = "";
+        // }
 
 
-
-
-
-
-        if (Physics.Raycast(ray, out hit, rayDistance))
-        {
-            //            Debug.Log(hit.collider.gameObject.transform.position);
-            //            Debug.Log(hit.collider.gameObject.name);
-            if (hit.collider.gameObject.CompareTag("Planet"))
-            {
-                if (hit.collider.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
-                {
-                    projectNameText.text = "Project\n" + _behaviour.myProjectName;
-                    PlayerManager.Instance.tentativeProjectNameInFront = _behaviour.myProjectName;
-                }
-            }
-        }
-        else
-        {
-            projectNameText.text = "";
-            PlayerManager.Instance.tentativeProjectNameInFront = "";
-        }
-
-
-
-
-
-
-        if (move)
-        {
-            gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
-
-            if (Physics.Raycast(ray, out hit, 100))
-            {
-                if (hit.collider.gameObject.CompareTag("Planet"))
-                {
-                    var tempDistance = Vector3.Distance(transform.position, hit.collider.gameObject.transform.position);
-                    // Debug.Log(tempDistance);
-
-                    //星に一定の距離まで近づいたら停止させる
-                    if (tempDistance < stopCriteria)
-                    {
-                        Debug.Log("Stop Move at " + tempDistance);
-                        StopMove();
-                    }
-
-                    if (!isHudShowing)
-                    {
-                        //星に一定の距離まで近づいたらHUDを表示させる
-                        if (tempDistance < distanceCriteria)
-                        {
-                            Debug.Log("Prep HUD at " + tempDistance);
-                            SetHUD(hit.collider.gameObject);
-                        }
-                    }
-                }
-            }
-        }
+        // if (move)
+        // {
+        //     gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
+        //
+        //     if (Physics.Raycast(ray, out hit, 100))
+        //     {
+        //         if (hit.collider.gameObject.CompareTag("Planet"))
+        //         {
+        //             var tempDistance = Vector3.Distance(transform.position, hit.collider.gameObject.transform.position);
+        //             // Debug.Log(tempDistance);
+        //
+        //             //星に一定の距離まで近づいたら停止させる
+        //             if (tempDistance < stopCriteria)
+        //             {
+        //                 Debug.Log("Stop Move at " + tempDistance);
+        //                 StopMove();
+        //             }
+        //
+        //             if (!isHudShowing)
+        //             {
+        //                 //星に一定の距離まで近づいたらHUDを表示させる
+        //                 if (tempDistance < distanceCriteria)
+        //                 {
+        //                     Debug.Log("Prep HUD at " + tempDistance);
+        //                     SetHUD(hit.collider.gameObject);
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     void ShowUI(TweenCallback callback)
@@ -184,7 +222,8 @@ public class PlayerManager : SingleInstance<PlayerManager>
         //APIたたいてエラーの場合
         Debug.Log("ShowErrorText called");
 
-        _projectTextBehaviour.SetTextBody("Analyzing...", targetProjectName, "Analyzing...(H)", "Analyzing...(" + Time.realtimeSinceStartup.ToString("F0") + ")");
+        _projectTextBehaviour.SetTextBody("Analyzing...", targetProjectName, "Analyzing...(H)",
+            "Analyzing...(" + Time.realtimeSinceStartup.ToString("F0") + ")");
     }
 
 
@@ -256,7 +295,6 @@ public class PlayerManager : SingleInstance<PlayerManager>
                 projectNameObj.SetActive(false);
                 ShowUI(ShowErrorText);
             }
-
         }
     }
 }
