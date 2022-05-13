@@ -9,6 +9,8 @@ using Newtonsoft.Json.Linq;
 
 public class PlayerManager : SingleInstance<PlayerManager>
 {
+    public float rotationSpeed = -20.0f;
+
     public float speed = 10.0f;
     public float distance = 70.0f;
     public GameObject backfireRight;
@@ -60,6 +62,18 @@ public class PlayerManager : SingleInstance<PlayerManager>
     // Update is called once per frame
     void Update()
     {
+
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            gameObject.transform.Rotate(0.0f, rotationSpeed * Time.deltaTime, 0.0f);
+        }
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            gameObject.transform.Rotate(0.0f, -1.0f * rotationSpeed * Time.deltaTime, 0.0f);
+        }
+
+
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             move = true;
