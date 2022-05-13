@@ -5,10 +5,14 @@ using UnityEngine.UI;
 using DG.Tweening;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TMPro;
 
 
 public class PlayerManager : SingleInstance<PlayerManager>
 {
+    [SerializeField] float rayDistance = 100;
+    [SerializeField] TextMeshProUGUI projectNameText;
+
     public float rotationSpeed = -20.0f;
 
     public float speed = 10.0f;
@@ -62,34 +66,72 @@ public class PlayerManager : SingleInstance<PlayerManager>
     // Update is called once per frame
     void Update()
     {
+        var direction = transform.forward;
 
-        if (Input.GetKey(KeyCode.LeftArrow))
+        Vector3 rayPosition = transform.position + new Vector3(0.0f, 1.0f, 0.0f);
+        Ray ray = new Ray(rayPosition, direction);
+        RaycastHit hit;
+
+        if (move)
         {
-            gameObject.transform.Rotate(0.0f, rotationSpeed * Time.deltaTime, 0.0f);
+
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+        else//動いていないときだけキー入力をうける、動いている途中で向きがかわると処理が面倒なので
         {
-            gameObject.transform.Rotate(0.0f, -1.0f * rotationSpeed * Time.deltaTime, 0.0f);
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                move = true;
+                backfireRight.SetActive(true);
+                backfireLeft.SetActive(true);
+                afterBurnerObj.SetActive(true);
+            }
+
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                gameObject.transform.Rotate(0.0f, rotationSpeed * Time.deltaTime, 0.0f);
+            }
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                gameObject.transform.Rotate(0.0f, -1.0f * rotationSpeed * Time.deltaTime, 0.0f);
+            }
+
         }
 
 
 
-        if (Input.GetKeyDown(KeyCode.Space))
+
+
+
+
+
+        if (Physics.Raycast(ray, out hit, rayDistance))
         {
-            move = true;
-            backfireRight.SetActive(true);
-            backfireLeft.SetActive(true);
-            afterBurnerObj.SetActive(true);
+            //            Debug.Log(hit.collider.gameObject.transform.position);
+            //            Debug.Log(hit.collider.gameObject.name);
+            if (hit.collider.gameObject.CompareTag("Planet"))
+            {
+                if (hit.collider.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
+                {
+                    projectNameText.text = "Project\n" + _behaviour.myProjectName;
+                    PlayerManager.Instance.tentativeProjectNameInFront = _behaviour.myProjectName;
+                }
+            }
         }
+        else
+        {
+            projectNameText.text = "";
+            PlayerManager.Instance.tentativeProjectNameInFront = "";
+        }
+
+
+
+
+
 
         if (move)
         {
             gameObject.transform.position += gameObject.transform.forward * speed * Time.deltaTime;
 
-            var direction = transform.forward;
-            Vector3 rayPosition = transform.position + new Vector3(0.0f, 1.0f, 0.0f);
-            Ray ray = new Ray(rayPosition, direction);
-            RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100))
             {
                 if (hit.collider.gameObject.CompareTag("Planet"))
