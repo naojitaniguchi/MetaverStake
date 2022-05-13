@@ -12,6 +12,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
 {
     [SerializeField] float rayDistance = 100;
     [SerializeField] TextMeshProUGUI projectNameText;
+    [SerializeField] GameObject pushToStartObj;
 
     public float rotationSpeed = -20.0f;
 
@@ -24,8 +25,6 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     bool move = false;
 
-    // Start is called before the first frame update
-    [SerializeField] GameObject projectNameObj;
     [SerializeField] ProjectTextBehaviour _projectTextBehaviour;
     [SerializeField] float distanceCriteria = 25; //この距離でHUD準備、API叩くなど
     [SerializeField] float stopCriteria = 25; //この距離で停止
@@ -57,10 +56,13 @@ public class PlayerManager : SingleInstance<PlayerManager>
 
     void Start()
     {
+        projectNameText.text = "";
+        pushToStartObj.SetActive(false);
         uiBackgroundImage.enabled = true;
         var c = uiBackgroundImage.color;
         c.a = 0f; // 初期値
         uiBackgroundImage.color = c;
+
     }
 
     // Update is called once per frame
@@ -88,6 +90,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
                         Debug.Log("Stop Move at " + tempDistance);
                         StopMove();
                     }
+
                     if (!isHudShowing)
                     {
                         //星に一定の距離まで近づいたらHUDを表示させる
@@ -99,11 +102,22 @@ public class PlayerManager : SingleInstance<PlayerManager>
                     }
                 }
             }
-
-
         }
-        else //動いていないときだけキー入力をうける、動いている途中で向きがかわると処理が面倒なので
+        else
         {
+            //動いていないときだけキー入力をうける、動いている途中で向きがかわると処理が面倒なので
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                gameObject.transform.Rotate(0.0f, rotationSpeed * Time.deltaTime, 0.0f);
+            }
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                gameObject.transform.Rotate(0.0f, -1.0f * rotationSpeed * Time.deltaTime, 0.0f);
+            }
+
+
+
+
             if (raycastResult)
             {
                 //            Debug.Log(hit.collider.gameObject.transform.position);
@@ -113,36 +127,28 @@ public class PlayerManager : SingleInstance<PlayerManager>
                     if (hit.collider.gameObject.TryGetComponent(out PlanetBehaviour _behaviour))
                     {
                         projectNameText.text = "Project\n" + _behaviour.myProjectName;
-                        PlayerManager.Instance.tentativeProjectNameInFront = _behaviour.myProjectName;
+                        pushToStartObj.SetActive(true);
+                        tentativeProjectNameInFront = _behaviour.myProjectName;
                     }
                 }
             }
             else
             {
                 projectNameText.text = "";
+                pushToStartObj.SetActive(false);
                 tentativeProjectNameInFront = "";
             }
 
-
-
-
-            if (Input.GetKeyDown(KeyCode.Space))
+            //Spacekeyを押して前に進めるのはプロジェクトが正面にあるときだけ
+            if (Input.GetKeyDown(KeyCode.Space) && tentativeProjectNameInFront != "")
             {
                 move = true;
                 backfireRight.SetActive(true);
                 backfireLeft.SetActive(true);
                 afterBurnerObj.SetActive(true);
+                pushToStartObj.SetActive(false);
             }
 
-            if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                gameObject.transform.Rotate(0.0f, rotationSpeed * Time.deltaTime, 0.0f);
-            }
-
-            if (Input.GetKey(KeyCode.RightArrow))
-            {
-                gameObject.transform.Rotate(0.0f, -1.0f * rotationSpeed * Time.deltaTime, 0.0f);
-            }
         }
 
 
@@ -284,7 +290,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
                 Debug.Log(a[0]);
                 totalStakedStr = a[0]["totalStaked"].ToString();
                 Debug.Log(totalStakedStr);
-                projectNameObj.SetActive(false);
+                pushToStartObj.SetActive(false);
                 ShowUI(ShowText);
             }
             catch (System.Exception E)
@@ -292,7 +298,7 @@ public class PlayerManager : SingleInstance<PlayerManager>
                 Debug.LogError("API叩く際にエラー");
                 Debug.LogError(E.Message);
                 totalStakedStr = "!!! API error";
-                projectNameObj.SetActive(false);
+                pushToStartObj.SetActive(false);
                 ShowUI(ShowErrorText);
             }
         }
